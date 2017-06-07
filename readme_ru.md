@@ -1,20 +1,23 @@
 # BTC-E Bot Trader
 
+[![Dependency Status](https://david-dm.org/steeply/btce-app-trader.svg)](https://david-dm.org/steeply/btce-app-trader)
+
 Это приложение работает на стороне сервера и управляется через Telegram. 
 Построено с использованием:
 
 * _JavaScript_;
 * _Btce-deal_;
+* _poloniex-api-node_;
 * _Telegram_;
 * _Ta-lib_;
 * _nodejs_.
 
-## Install
+## Установка
 
 1. Установите [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) если у вас он не установлен. Откройте консоль и введите ваш e-mail и никнейм:
 ```
-$ git config --global user.name "John Doe"
-$ git config --global user.email "johndoe@example.com"
+$ git config --global user.name "Your Name"
+$ git config --global user.email "yourname@example.com"
 ```
  
 2. Установите [node.js](https://nodejs.org/en/) или используйте хостинг ([heroku](https://signup.heroku.com/login), [pivotal](https://account.run.pivotal.io/z/uaa/sign-up), etc.).
@@ -73,7 +76,7 @@ $ git push heroku master
 
 
 
-## Setting
+## Настройка
 
 ### Telegram. Создание бота.
 
@@ -89,16 +92,6 @@ $ git push heroku master
 ### Параметры переменного окружения:
 
 #### Обязательные параметры
-
- Option | Description
-----------------|----------------------
-**TELEGRAM_TOKEN**                          | Ваш токен для telegram
-**TELEGRAM_ID**                             | ID вашего пользователя в telegram
-**NAME_COIN**                               | Торговая валюта (Например: ltc)
-**NAME_COIN_TWO**                           | Торговая валюта (Например: usd)
-EXCHANGE                                    | Выбор биржи **btc-e** или **poloniex** (default: btc-e)
-
-> TELEGRAM_ID будет получен при первом **запуске торгового скрипта.** Для его получения напишите telegram боту любое сообщение.
 
 ##### Для биржи BTC-E
 
@@ -117,6 +110,18 @@ BTCE_HOST            | Адрес биржи Btc-e
 POLONIEX_FEE             | Комиссия на сделки биржи POLONIEX (default: 0.25)
 POLONIEX_DELAY_API       | Задержка при выполнении запросов к api в миллисекундах (default: 100)
 
+
+ Option | Description
+----------------|----------------------
+**NAME_COIN**             | Торговая валюта (Например: ltc)
+**NAME_COIN_TWO**         | Торговая валюта (Например: usd)
+EXCHANGE                  | Выбор биржи **btc-e** или **poloniex** (default: btc-e)
+TELEGRAM_TOKEN            | Ваш токен для Telegram
+TELEGRAM_ID               | ID вашего пользователя в telegram
+TELEGRAM_OFF              | Отключить Telegram. (default: false)
+
+> TELEGRAM_ID будет получен при первом **запуске торгового скрипта.** Для его получения напишите telegram боту любое сообщение.
+
 По умолчанию бот запустится на дефолтных настройках. Вы можете их изменить используя следующие параметры.
 
 #### Используемые настройки
@@ -128,8 +133,8 @@ DEPOSIT_LIMIT_PERCENT               | Процент использования 
 DEPOSIT_LIMIT_CURRENCY              | Размер использования депозита в валюте (default: false)
 NOTIFICATION_PAIR                   | Пары для уведомления о скачках курса (Например: btc/usd, ltc/usd или **all/all** для всех пар)
 NOTIFICATION_DEVIATION_PERCENT      | Насколько процентов должен увеличиться спред чтобы сработало уведомление (default: 600)
-COUNT_ORDERS                        | Количество ордеров (default: рассчитывается на основе размера депозита)
-QUANTITY_ORDERS_IN_BLOCKS           | Количество ордеров в блоке (default: false)
+COUNT_ORDERS                        | Количество ордеров. Сколько всего будет установлено. (default: рассчитывается на основе размера депозита)
+QUANTITY_ORDERS_IN_BLOCKS           | Количество ордеров в блоке. Сколько ордеров будет одномоментно на рынке. (default: false)
 TIME_CLOSE_ORDERS                   | Время закрытия неиспользованных ордеров (в минутах) (default: 5)
 TIME_CLOSE_ORDERS_INACTIVITY        | Время закрытия ордеров при бездействии (в минутах) (default: 15)
 STEP_BREAKEVEN_PERCENT              | Процент отступа от безубытка между bid и ask (default: 50)
@@ -149,6 +154,7 @@ RANGE_OFFSET                        | Диапазон смещения орде
 OFFSET_FIRST_ORDERS_PERCENT         | Отступ первого ордера в процентах (default: false)
 
 > Параметр **OFFSET_FIRST_ORDERS_PERCENT** можно использовать совместно с любым из выбранных вариантов.
+> Чтобы установить первый ордер по рынку, используйте OFFSET_FIRST_ORDERS_PERCENT=0.00001
 
 #### Модули автоконфигурации
 
@@ -176,9 +182,9 @@ BBANDS_INTERVAL                     | Таймфрейм (в минутах) (de
 
  Option | Description
 ----------------|----------------------
-ONE_ORDERS_SELL                     | Стратегия "Рыбалка" (default: false)
+ONE_ORDERS_SELL                     | Стратегия "One Sell a lot Buy" (default: false)
 ONE_ORDERS_SELL_PERCENT             | Задает процент желаемой прибыли (default: 1)
-ONE_ORDERS_SELL_OFFSET              | Разница между ценой LastPrice и первым ордером buy в стеке ордеров в % (default: 2)
+ONE_ORDERS_SELL_OFFSET              | Разница между ценой LastPrice и первым ордером buy в стеке ордеров в %. Будет подтягивать ордера вверх, если это значение будет превышено. (default: 2)
 INTEGRITY_CONTROL_ORDERS            | Контроль целостности ордеров (soft - мягкий, hard - жесткий) (default: soft)
 
 > Если параметр **INTEGRITY_CONTROL_ORDERS** в режиме `hard`, то sell ордер будет установлен только если объемы установленных и исполненных  buy ордеров будут совпадать (если ни один ордер не потеряется).
@@ -192,7 +198,7 @@ INTEGRITY_CONTROL_ORDERS            | Контроль целостности о
  Option | Description
 ----------------|----------------------
 EMAIL_BUG_REPORT_ADDRESS    | Email адрес для уведомлениях о падениях и ошибках сети
-HOST_SMTP                   | Адрес почтового сервера
+HOST_SMTP                   | Адрес почтового сервера (default: smtp.yandex.ru)
 EMAIL_AUTH_USER             | Логин авторизации на почтовом сервере
 EMAIL_AUTH_PASS             | Пароль почтового сервера
 TIME_ZONE                   | Временная зона (Например: Europe/Moscow) [Database Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
@@ -202,12 +208,20 @@ LOG_TRANSPORTS              | Куда писать лог (0 - консоль, 
 LOG_PATH                    | Пользовательский путь до директории с логом (default: false)
 RESTART_TRADER_TIME         | Через сколько секунд перезапрашивать данные после сетевых ошибок (default: 5)
 NOTIFICATION_ERROR_COUNT    | Количество ошибок за 5 минут для уведомления через telegram (default: false)
-TELEGRAM_OFF                | Отключить Telegram. (default: false)
 
 > Опция **TELEGRAM_OFF** отключает возможность использовать Telegram в боте. Всё управление и все уведомления посылаемые через Telegram будут так же отключены!
 
+> Опция **NODE_ENV=production** включает:
+ 1. уведомление о старте бота в Telegram.
+ 2. уведомления об ошибках на E-mail.
+ 3. запрещает использовать conf-dev.js.
 
-## Run
+## Запуск
+ 
+#### На хостинге
+Смотрите инструкцию к хостингу.
+
+#### На локальном компьютере
 
 ```
 $ npm start
@@ -217,7 +231,7 @@ $ npm start
 TELEGRAM_TOKEN=110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw TELEGRAM_ID=12345678 node ./build/server
 ```
 
-Для windows
+Для Windows
 
 ```
 SET TELEGRAM_TOKEN=110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw 
